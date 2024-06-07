@@ -6,12 +6,11 @@ use std::env::args;
 use std::fs::File;
 use std::io::copy;
 use std::io::BufReader;
-use std::io::prelude::*;
 use std::time::Instant;
 
 fn main(){
     if args().len() != 3{
-        eprintln!("usage: source output");
+        eprintln!("Usage: source output");
         return;
     }
     let mut input_file = BufReader::new(File::open(args().nth(1).unwrap()).unwrap());

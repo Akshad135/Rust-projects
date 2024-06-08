@@ -6,7 +6,7 @@ use std::io;
 use std::io::BufReader;
 use std::time::Instant;
 
-fn main(){
+fn main() -> Result<(), Box<dyn std::error::Error>>{
 
     println!("Enter the path to source file: ");
     let mut source_path = String::new();
@@ -25,30 +25,21 @@ fn main(){
     let output_path: String = output_path.trim().parse()
     .expect("Failed to parse as string");
 
-    let mut input_file = match File::open(source_path) {
-        Ok(file) => BufReader::new(file),
-        Err(error) => {
-            println!("Failed to open file: {}", error);
-            return;
-        }
-    };
+    let input_file = File::open(source_path)?;
+    let mut input_file = BufReader::new(input_file);
 
-    let output_file = match File::create(output_path) {
-        Ok(file) => file,
-        Err(error) => {
-            println!("Failed to create file: {}", error);
-            return;
-        }
-    };
+    let output_file = File::create(output_path)?;
 
     let mut result = GzEncoder::new(output_file, Compression::default());
+
     let start = Instant::now();
 
-    copy(&mut input_file, &mut result).unwrap();
-
-    let output = result.finish().unwrap();
+    copy(&mut input_file, &mut result)?;
+    let output = result.finish()?;
 
     println!("Source length: {:?}", input_file.get_ref().metadata().unwrap().len());
     println!("Output length: {:?}", output.metadata().unwrap().len());
     println!("Time taken: {:?}", start.elapsed());
+
+    Ok(())
 }

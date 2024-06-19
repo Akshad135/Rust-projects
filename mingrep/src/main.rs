@@ -33,7 +33,7 @@ fn file_read(path: &Path) -> Result<String, ()> {
 fn search(query: &str, data: &str) {
     let mut final_data = vec![];
     for line in data.lines() {
-        if line.contains(query) {
+        if line.to_lowercase().contains(&query.to_lowercase()) {
             final_data.push(line)
         }
     }
